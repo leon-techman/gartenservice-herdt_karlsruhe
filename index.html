@@ -468,8 +468,22 @@ footer{background:var(--forest);color:rgba(231,230,215,.78);padding:62px 0 28px}
 <script>
 const nav=document.getElementById('nav');
 addEventListener('scroll',()=>nav.classList.toggle('stuck',scrollY>60));
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.12});
-document.querySelectorAll('[data-r]').forEach(el=>io.observe(el));
+(function(){
+  var els=[].slice.call(document.querySelectorAll('[data-r]'));
+  function on(el){el.classList.add('on')}
+  function inView(el){var r=el.getBoundingClientRect();var vh=innerHeight||document.documentElement.clientHeight;return r.top<vh+60&&r.bottom>-60}
+  function revealVisible(){els.forEach(function(el){if(!el.classList.contains('on')&&inView(el))on(el)})}
+  revealVisible(); // sichtbare Inhalte sofort einblenden – unabhaengig von IO/rAF
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){on(e.target);io.unobserve(e.target)}})},{threshold:.12});
+    els.forEach(function(el){if(!el.classList.contains('on'))io.observe(el)});
+  } else { els.forEach(on); }
+  addEventListener('load',revealVisible);
+  addEventListener('scroll',revealVisible,{passive:true});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)revealVisible()});
+  // Sicherheitsnetz: falls nichts eingeblendet wurde, alles zeigen
+  setTimeout(function(){if(!document.querySelector('[data-r].on'))els.forEach(on)},1500);
+})();
 document.querySelectorAll('.qh').forEach(h=>h.addEventListener('click',()=>{
   const q=h.parentElement,o=q.classList.contains('open');
   document.querySelectorAll('.q').forEach(x=>{x.classList.remove('open');x.querySelector('.qb').style.maxHeight=null});
