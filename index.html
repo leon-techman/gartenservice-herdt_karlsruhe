@@ -493,4 +493,7 @@ document.querySelector('.burger').addEventListener('click',()=>{
   const l=document.querySelector('.nl');const o=l.style.display==='flex';l.style.display=o?'none':'flex';
   if(!o)l.style.cssText+='position:absolute;top:60px;left:0;right:0;background:var(--bg);flex-direction:column;padding:20px 28px;gap:16px;border-bottom:1px solid var(--line)';
 });
-function sf(e){e.preventDefault();const b=document.getElementB
+function sf(e){e.preventDefault();const b=document.getElementById('sb');if(!b)return false;b.textContent='✓ Anfrage gesendet – ich melde mich in Kürze!';b.style.background='#3f7d4f';b.style.opacity='.9';b.disabled=true;return false;}
+</script>
+</body>
+</html>
